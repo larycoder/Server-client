@@ -1,0 +1,2 @@
+# Ver 1:
+I implements TCP Client-Server in C language for first step in understanding this model. I follows [this link](https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/) as guidelines
