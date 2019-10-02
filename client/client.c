@@ -29,6 +29,15 @@ void func(int sockfd){
   }
 }
 
+void getIP(char *ip){
+  // get server IP
+  int n=0;
+  bzero(ip, sizeof(ip));
+  printf("Enter server ip: ");
+  while((ip[n++]=getchar())!='\n');
+  ip[--n]='\0';
+}
+
 int main(){
   int sockfd, connfd;
   struct sockaddr_in servaddr, cli;
@@ -43,9 +52,12 @@ int main(){
     printf("Socket successfully created..\n");
   bzero(&servaddr, sizeof(servaddr));
 
+  char ip[30];
+  getIP(ip);
+
   // assign IP, PORT
   servaddr.sin_family = AF_INET;
-  servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  servaddr.sin_addr.s_addr = inet_addr(ip);
   servaddr.sin_port = htons(PORT);
 
   // connect the client socket to server socket
