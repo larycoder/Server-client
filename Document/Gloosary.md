@@ -4,3 +4,5 @@
 **Header of Package**: Define source and destinaiton of the package.
 
 **Payload of Package**: Define data of that package.
+
+**IRC chat**: is a system for chatting that involves a set of rules and conventions and client/server software.
