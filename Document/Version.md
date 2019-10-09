@@ -6,3 +6,6 @@ Client Side will ask Ip from user => that mean server client can be distributed 
 
 # Ver 2:
 After testing TCP connection with a little bit of success, we move forward to next step: developing the IRC server and client for chatting.
+
+## Ver 2.01:
+I want to build simple server implement IRC protocol based on rfc1459 and rfc2810. I do not have any further intent.

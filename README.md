@@ -9,3 +9,6 @@ This is where I clarify what is my expectation and my goal.
 
 ## Document/Gloosary.md
 This is I identify some interesting word or definition.
+
+## Document/Milestones.md
+The place show my plan in process
