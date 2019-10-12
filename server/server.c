@@ -7,36 +7,19 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define MAX 80
+#define MAX 1024
 #define PORT 8080
 #define SA struct sockaddr
 
-// function design to chat between client and server
-void func(int sockfd){
+int reply(int sockfd){
   char buff[MAX];
-  int n;
-  // infinite loop for chat
-  for(;;){
-    bzero(buff,MAX);
-
-    // read the message from client and copy it in buffer
-    read(sockfd, buff, sizeof(buff));
-    // print buffer which contains the client contents
-    printf("From client: %s\t To client: ", buff);
-    bzero(buff, MAX);
-    n = 0;
-    // copy server message in the buffer
-    while((buff[n++]=getchar())!='\n');
-
-    // and send that buffer to client
-    write(sockfd, buff, sizeof(buff));
-
-    // if msg contains "Exit" then server exit and chat ended.
-    if(strncmp("exit", buff, 4)==0){
-      printf("Server Exit...\n");
-      break;
-    }
-  }
+  bzero(buff, MAX);
+  read(sockfd, buff, MAX);
+  printf("client: %s\n", buff);
+  if(strncmp("exit", buff, 4)==0);
+  bzero(buff, MAX);
+  strncpy(buff, "exit\b\b\b\bok,got it\n",MAX);
+  write(sockfd, buff, MAX);
 }
 
 // Driver function
@@ -75,20 +58,25 @@ int main(){
   }
   else 
     printf("Server listening..\n");
-  len = sizeof(cli);
 
   // Accept the data packet from client and verification
-  connfd = accept(sockfd, (SA*)&cli, &len);
-  if(connfd < 0){
-    printf("server accept failed...\n");
-    exit(0);
+  while(1){
+    len = sizeof(cli);
+    pid_t pid=0;
+    connfd = accept(sockfd, (SA*)&cli, &len);
+    if(connfd < 0){
+      printf("server accept failed...\n");
+    }
+    else{ 
+      pid=fork();
+    }
+    if(pid==0){
+      printf("server accept the client at child process: %d\n", getpid());
+      reply(connfd);
+      shutdown(connfd, SHUT_RDWR);
+      close(connfd);
+    }
+    else close(connfd);
   }
-  else 
-    printf("server accept the client...\n");
-
-  // Function for chatting between client and server
-  func(connfd);
-
-  // After chatting close the socket
-  close(sockfd);
+  return 0;
 }
