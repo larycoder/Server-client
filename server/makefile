@@ -1,7 +1,13 @@
+CC      = gcc
+CFLAGS  = -pthread
+TARGET  = server.o
+OBJFILES= main.c staff.c talker.c header.h
+LDFLAGS =
+
 default: server
 
-server: server.c
-	gcc server.c -o server.o
+server: $(OBJFILES)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
 
-to: server.c
-	gcc server.c -o $(path)/server.o
+to: $(OBJFILES)
+	$(CC) $(CFLAGS) -o $(path)/$(TARGET) $(OBJFILES) $(LDFLAGS)
