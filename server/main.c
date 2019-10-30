@@ -52,7 +52,7 @@ int main(){
     for(int i=0; i<MAX_TALKER; i++){
       if(talker_list[i] != 0 && FD_ISSET(talker_list[i], &readfds)){
         valread = talk(room, sizeof(room), talker_list[i]);
-        if(valread == 0 || valread >= (MAX-1)){
+        if(valread <= 0 || valread >= (MAX-1)){
           printf("fd %d close\n", talker_list[i]);
           close(talker_list[i]);
           talker_list[i] = 0;
@@ -61,6 +61,7 @@ int main(){
           room[++valread]='\0';
           printf("client [%d] talk: %s\n", i, room);
           broad_cast(room, strlen(room), talker_list);
+          printf("finishing broad casting\n");
         }
       }
     }
