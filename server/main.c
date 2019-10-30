@@ -61,7 +61,6 @@ int main(){
           room[++valread]='\0';
           printf("client [%d] talk: %s\n", i, room);
           broad_cast(room, strlen(room), talker_list);
-          printf("finishing broad casting\n");
         }
       }
     }

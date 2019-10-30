@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -pthread
+CFLAGS  =
 TARGET  = server.o
 OBJFILES= main.c staff.c talker.c header.h
 LDFLAGS =

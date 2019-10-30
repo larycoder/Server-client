@@ -1,7 +1,13 @@
+CC			= gcc
+CFLAGS	=
+TARGET	= client.o
+OBJFILES= main.c
+LDFLAGS	=
+
 default: client
 
-client: client.c
-	gcc client.c -o client.o
+client: $(OBJFILES)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
 
-to: client.c
-	gcc client.c -o $(path)/client.o
+to: $(OBJFILES)
+	$(CC) $(CFLAGS) -o $(path)/$(TARGET) $(OBJFILES) $(LDFLAGS)	
