@@ -6,8 +6,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define MAX 80
+#define MAX 9000
 #define PORT 8080
+
 #define SA struct sockaddr
 
 void func(int sockfd){
@@ -18,7 +19,8 @@ void func(int sockfd){
     printf("Enter the string: ");
     n=0;
     while((buff[n++]=getchar())!='\n');
-    write(sockfd, buff, sizeof(buff));
+    buff[n]='\0';
+    write(sockfd, buff, strlen(buff));
     bzero(buff, sizeof(buff));
     read(sockfd, buff, sizeof(buff));
     printf("From Server: %s", buff);
