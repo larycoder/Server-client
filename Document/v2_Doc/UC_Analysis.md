@@ -1,3 +1,4 @@
+# SERVER SIDE
 # The first Server is simulation of a real chat room !
 - First, when some one come to chat room, he/she need to register with staff
 - The staff takes you to the room
@@ -22,3 +23,9 @@
 
 # The talker:
 - Talk to another talkers
+
+
+--------------------------------------------------------------------------------
+
+# CLIENT SIDE
+
