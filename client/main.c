@@ -1,7 +1,4 @@
-#define MAX 9000
-#define PORT 8080
-
-#define SA struct sockaddr
+# include "header.h"
 
 void func(int sockfd){
   char buff[MAX];
@@ -23,33 +20,19 @@ void func(int sockfd){
   }
 }
 
-void getIP(char *ip){
-  // get server IP
-  int n=0;
-  bzero(ip, sizeof(ip));
-  printf("Enter server ip: ");
-  while((ip[n++]=getchar())!='\n');
-  ip[--n]='\0';
-}
-
 int main(){
   int sockfd, connfd;
   struct sockaddr_in servaddr, cli;
 
-  // socket create and varification
-  sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  if(sockfd==-1){
-    printf("Socket creation failed...\n");
-    exit(0);
-  }
-  else
-    printf("Socket successfully created..\n");
-  bzero(&servaddr, sizeof(servaddr));
-
+  // socket fd create
+  sockfd = createFd();
+  if(sockfd == -1) exit(1);
+  // get ip from user
   char ip[30];
-  getIP(ip);
+  getIP(ip, sizeof(ip));
 
   // assign IP, PORT
+  bzero(&servaddr, sizeof(servaddr));
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = inet_addr(ip);
   servaddr.sin_port = htons(PORT);
@@ -57,10 +40,12 @@ int main(){
   // connect the client socket to server socket
   if(connect(sockfd, (SA*)&servaddr, sizeof(servaddr))!=0){
     printf("connection with the server failed...\n");
-    exit(0);
+    exit(1);
   }
   else 
     printf("Connected to the Server..\n");
+
+  // server connected in sockfd, do something !
 
   // function for chat
   func(sockfd);

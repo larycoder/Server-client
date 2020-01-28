@@ -1,7 +1,7 @@
 CC			= gcc
 CFLAGS	=
 TARGET	= client.o
-OBJFILES= main.c
+OBJFILES= main.c staff.c
 LDFLAGS	=
 
 default: client
