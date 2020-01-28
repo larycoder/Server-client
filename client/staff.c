@@ -21,9 +21,9 @@ int createFd(void){
 }
 
 // setup non-blocking reading from stdin
-int setNonBlockingReading(void){
+int setNonBlockingReading(int fd){
   // setup non-blocking reading for input
-  if(fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK) == 0){
+  if(fcntl(fd, F_SETFL, O_NONBLOCK) == 0){
     printf("Set non-blocking reading successful!\n");
     return 0;
   }

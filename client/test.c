@@ -31,7 +31,7 @@ int main(){
   buff[0] = '\0';
 
   // setup I/O
-  if(!(setNonBlockingReading() == 0)){
+  if(!(setNonBlockingReading(STDIN_FILENO) == 0)){
     exit(1);
   }
 

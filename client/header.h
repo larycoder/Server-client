@@ -16,13 +16,14 @@
 
 #define SA struct sockaddr
 #define MAX 9000 // define max length of buffer
-#define PORT 8080
+#define R_PORT 80
+#define W_PORT 80
 
 // staff operation
 void getIP(char *ip, int sz);
 int createFd(void);
 int trackUserMess(char* buff, int sz, int current);
-int setNonBlockingReading(void);
+int setNonBlockingReading(int fd);
 
 /** 
 * user interface handler

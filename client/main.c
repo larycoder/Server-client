@@ -1,54 +1,80 @@
 # include "header.h"
 
-void func(int sockfd){
-  char buff[MAX];
-  int n;
-  for(;;){
-    bzero(buff, sizeof(buff));
-    n=0;
-    while((buff[n++] = getchar())!='\n');
-    buff[n]='\0';
-    write(sockfd, buff, strlen(buff) + 1);
-    bzero(buff, sizeof(buff));
-    read(sockfd, buff, sizeof(buff));
-    printf("%s", buff);
-    if((strncmp(buff,"exit",4))==0){
-      printf("Client Exit...\n");
-      break;
+char buff[MAX];
+int readFd = 0, writeFd = 0;
+
+void* trackUserType(void* arg){
+  // var used to check user type
+  int cursor = 0;
+  int oldCursor = 0;
+  while(1){
+    cursor = trackUserMess(buff, MAX - 1, cursor);
+    if(cursor != oldCursor){
+      updateUserMess(buff);
+      oldCursor = cursor;
     }
   }
 }
 
-int main(){
-  int sockfd, connfd;
-  struct sockaddr_in servaddr, cli;
+void closeSocket(void){
+  close(readFd);
+  close(writeFd);
+}
 
+int main(){
+  struct sockaddr_in readAddr, writeAddr;
   // socket fd create
-  sockfd = createFd();
-  if(sockfd == -1) exit(1);
+  readFd = createFd();
+  if(readFd == -1) exit(1);
+  writeFd = createFd();
+  if(writeFd == -1) exit(1);
+
   // get ip from user
   char ip[30];
   getIP(ip, sizeof(ip));
 
   // assign IP, PORT
-  bzero(&servaddr, sizeof(servaddr));
-  servaddr.sin_family = AF_INET;
-  servaddr.sin_addr.s_addr = inet_addr(ip);
-  servaddr.sin_port = htons(PORT);
+  bzero(&readAddr, sizeof(readAddr));
+  bzero(&writeAddr, sizeof(writeAddr));
+  writeAddr.sin_family = readAddr.sin_family = AF_INET;
+  writeAddr.sin_addr.s_addr = readAddr.sin_addr.s_addr = inet_addr(ip);
+  readAddr.sin_port = htons(R_PORT);
+  writeAddr.sin_port = htons(W_PORT);
 
   // connect the client socket to server socket
-  if(connect(sockfd, (SA*)&servaddr, sizeof(servaddr))!=0){
+  int readConn = connect(readFd, (SA*)&readAddr, sizeof(readAddr));
+  int writeConn = connect(writeFd, (SA*)&writeAddr, sizeof(writeAddr));
+  if(readConn != 0 || writeConn != 0){
     printf("connection with the server failed...\n");
     exit(1);
   }
   else 
     printf("Connected to the Server..\n");
 
-  // server connected in sockfd, do something !
+  // do something !
 
-  // function for chat
-  func(sockfd);
+  // setup I/O
+  if(!(setNonBlockingReading(STDIN_FILENO) == 0)){
+    exit(1);
+  }
+
+  // setup buff
+  bzero(&buff, MAX);
+  buff[0] = '\0';
+
+  // setup UI
+  enableRawMode();
+  drawUI();
+
+  // setup threads
+  pthread_t trackingUserTypeThread;
+  pthread_create(&trackingUserTypeThread, NULL, trackUserType, NULL);
+
+  // join thread with main thread
+  pthread_join(trackingUserTypeThread, NULL);
 
   // close the socket
-  close(sockfd);
+  atexit(closeSocket);
+
+  return 0;
 }
