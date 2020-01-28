@@ -19,3 +19,27 @@ int createFd(void){
     printf("Socket successfully created..\n");
   return sockfd;
 }
+
+// setup non-blocking reading from stdin
+int setNonBlockingReading(void){
+  // setup non-blocking reading for input
+  if(fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK) == 0){
+    printf("Set non-blocking reading successful!\n");
+    return 0;
+  }
+  else{
+    printf("fail to set non-blocking reading successful!\n");
+    return -1;
+  }
+}
+
+int trackUserMess(char* buff, int sz, int current){
+  char c;
+  // ctrl D (^D) is 4
+  while(read(STDIN_FILENO, &c, 1) != -1){
+    buff[current] = c;
+    buff[current + 1] = '\0';
+    current = (current + 1) % sz;
+  }
+  return current;
+}

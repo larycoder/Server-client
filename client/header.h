@@ -6,6 +6,14 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include <termios.h> // lib handle terminal
+
+// lib serve multiple thread
+#include <pthread.h>
+#include <semaphore.h>
+
+#include<fcntl.h> // Non-blocking I/O lib
+
 #define SA struct sockaddr
 #define MAX 9000 // define max length of buffer
 #define PORT 8080
@@ -13,3 +21,15 @@
 // staff operation
 void getIP(char *ip, int sz);
 int createFd(void);
+int trackUserMess(char* buff, int sz, int current);
+int setNonBlockingReading(void);
+
+/** 
+* user interface handler
+**/
+
+void enableRawMode();
+// 3 functions below need to work together
+void drawUI(void);
+void updateUserMess(char* messEnter);
+void updateChatRoom(char* newMessCome);

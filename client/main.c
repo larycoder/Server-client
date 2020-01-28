@@ -5,14 +5,13 @@ void func(int sockfd){
   int n;
   for(;;){
     bzero(buff, sizeof(buff));
-    printf("Enter the string: ");
     n=0;
-    while((buff[n++]=getchar())!='\n');
+    while((buff[n++] = getchar())!='\n');
     buff[n]='\0';
-    write(sockfd, buff, strlen(buff));
+    write(sockfd, buff, strlen(buff) + 1);
     bzero(buff, sizeof(buff));
     read(sockfd, buff, sizeof(buff));
-    printf("From Server: %s", buff);
+    printf("%s", buff);
     if((strncmp(buff,"exit",4))==0){
       printf("Client Exit...\n");
       break;
