@@ -12,6 +12,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+#include <signal.h> // lib handle ctrl C signal
+
 #include<fcntl.h> // Non-blocking I/O lib
 
 #define SA struct sockaddr

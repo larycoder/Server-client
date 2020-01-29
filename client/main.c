@@ -47,11 +47,13 @@ void* broadcastMess(void* arg){
   }
 }
 
-void closeSocket(void){
+void closeSocket(){
   close(readFd);
   close(writeFd);
   sem_destroy(&mutex);
   printf("\033[2J"); // clear terminal
+  printf("\033[0;0H"); // jump to begin of terminal
+  exit(0);
 }
 
 int main(){
@@ -108,8 +110,8 @@ int main(){
   enableRawMode();
   drawUI();
 
-  // close the socket
-  atexit(closeSocket);
+  // called when program terminate
+  signal(SIGINT, closeSocket);
 
   // setup threads
   sem_init(&mutex, 0, 1);
@@ -120,6 +122,4 @@ int main(){
   // join thread with main thread
   pthread_join(trackingUserTypeThread, NULL);
   pthread_join(broadcastMessThread, NULL);
-
-  return 0;
 }
