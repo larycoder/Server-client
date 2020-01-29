@@ -51,6 +51,7 @@ void closeSocket(void){
   close(readFd);
   close(writeFd);
   sem_destroy(&mutex);
+  printf("\033[2J"); // clear terminal
 }
 
 int main(){

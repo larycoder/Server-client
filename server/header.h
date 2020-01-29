@@ -8,6 +8,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
+// lib serve multiple thread
+#include <pthread.h>
+#include <semaphore.h>
+
 // define maximum value of buffer
 #define MAX 5000
 
@@ -29,6 +33,8 @@ void broad_cast(char* room, int word_sz, int* talker_array);
 int createFd(void);
 int push2List(int fd, int* list, int sz);
 int addNewUser(int userFd, int* talkers, int* listeners);
+int resetQueue(fd_set* fdSet, int* list, int sz);
+int add2Queue(fd_set* fdSet, int* list, int sz, int nfds);
 
 /*
   * Define of protocol

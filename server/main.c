@@ -1,7 +1,12 @@
 #include "header.h"
 
 int main(){
-  // prepare listenning socket
+  // declare queues
+  char room[MAX];
+  int talker_list[MAX_TALKER];
+  int listen_list[MAX_TALKER];
+
+  // setup listenning socket
   int Room_fd = createFd();
   if(Room_fd < 0) exit(1);
 
@@ -24,37 +29,33 @@ int main(){
   // allow reuse of local addresses for this addr
   // setsockopt(Room_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
 
-  // prepare queue
-  char room[MAX];
-  int talker_list[MAX_TALKER];
-  int listen_list[MAX_TALKER];
+  // setup queues
   bzero(room, sizeof(room));
   bzero(talker_list, sizeof(talker_list));
   bzero(listen_list, sizeof(listen_list));
 
   // prepare for select
-  int max_fd, activity, valread;
-  fd_set readfds;
+  fd_set talkFds;
+  int talkNfds, activity;
+  int len;
   // server real running time
   while(1){
-    FD_ZERO(&readfds);
-    // add listen socket to specify list
-    FD_SET(Room_fd, &readfds);
-    max_fd = Room_fd;
-    // add talker socket to specify list
-    for(int i=0; i < MAX_TALKER; i++){
-      if(talker_list[i] != 0){
-        FD_SET(talker_list[i], &readfds);
-        if(talker_list[i] > max_fd) max_fd = talker_list[i];
-      }
+    talkNfds = resetQueue(&talkFds, talker_list, MAX_TALKER);
+    talkNfds = add2Queue(&talkFds, listen_list, MAX_TALKER, talkNfds);
+    // add main socket to talk set
+    FD_SET(Room_fd, &talkFds);
+    if(Room_fd > (talkNfds - 1)){
+      talkNfds = Room_fd + 1;
     }
+
     // wait for the activity
-    activity = select(max_fd + 1, &readfds, NULL, NULL, NULL);
+    activity = select(talkNfds, &talkFds, NULL, NULL, NULL);
     if(activity == -1){
       printf("Select occurred error...\n");
       exit(0);
     }
-    if(FD_ISSET(Room_fd, &readfds)){
+
+    if(FD_ISSET(Room_fd, &talkFds)){
       int user = accept(Room_fd, (SA*)NULL, NULL);
       printf("Accept new user at fd %d\n", user);
       if(addNewUser(user, talker_list, listen_list) < 0){
@@ -63,16 +64,24 @@ int main(){
       }
     }
 
-    for(int i=0; i<MAX_TALKER; i++){
-      if(talker_list[i] != 0 && FD_ISSET(talker_list[i], &readfds)){
-        valread = talk(room, sizeof(room), talker_list[i]);
-        if(valread <= 0 || valread > (MAX - 2)){
-          printf("fd %d close\n", talker_list[i]);
+    for(int i = 0; i < MAX_TALKER; i++){
+      if(listen_list[i] != 0 && FD_ISSET(listen_list[i], &talkFds)){
+        printf("hear_fd %d close\n", listen_list[i]);
+        close(listen_list[i]);
+        listen_list[i] = 0;
+      }
+    }
+
+    for(int i = 0; i < MAX_TALKER; i++){
+      if(talker_list[i] != 0 && FD_ISSET(talker_list[i], &talkFds)){
+        len = talk(room, sizeof(room) - 1, talker_list[i]);
+        if(len < 1){
+          printf("talk_fd %d close\n", talker_list[i]);
           close(talker_list[i]);
           talker_list[i] = 0;
         }
         else{
-          room[++valread]='\0';
+          room[len + 1] = '\0';
           printf("client [%d] talk:\n %s\n", i, room);
           broad_cast(room, strlen(room), listen_list);
         }

@@ -43,3 +43,28 @@ int push2List(int fd, int* list, int sz){
   }
   return -1;
 }
+
+int resetQueue(fd_set* fdSet, int* list, int sz){
+  FD_ZERO(fdSet);
+  int max = -1;
+  for(int i = 0; i < sz; i++){
+    if(list[i] != 0){
+      FD_SET(list[i], fdSet);
+      if(max < list[i] || max < 0){
+        max = list[i];
+      }
+    }
+  }
+  return max + 1;
+}
+
+int add2Queue(fd_set* fdSet, int* list, int sz, int nfds){
+  int max = nfds - 1;
+  for(int i = 0; i < sz; i++){
+    if(list[i] != 0){
+      FD_SET(list[i], fdSet);
+      if(max < list[i]) max = list[i];
+    }
+  }
+  return max + 1;
+}
