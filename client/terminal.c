@@ -17,6 +17,8 @@ void enableRawMode() {
 
 void drawUI(void){
   printf("\033[2J"); // clear terminal
+  updateUserMess("\n______begin char field______\n");
+  printf("\033[s"); // save cursor position
   updateUserMess("");
 }
 
@@ -27,9 +29,9 @@ void updateUserMess(char* messEnter){
 }
 
 void updateChatRoom(char* newMessCome){
-  printf("\033[u"); // store cursor position
-  printf("\n"); // begin new chat line
+  printf("\033[u"); // restore cursor to enter field
   printf("%s", newMessCome);
   fflush(stdout);
-  printf("\033[u"); // restore cursor to enter field
+  printf("\n"); // newline in chat field
+  printf("\033[s"); // save cursor position
 }
