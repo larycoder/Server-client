@@ -15,7 +15,7 @@
 #include<fcntl.h> // Non-blocking I/O lib
 
 #define SA struct sockaddr
-#define MAX 1024 // define max length of buffer
+#define MAX 5000 // define max length of buffer
 #define R_PORT 8080
 #define W_PORT 8080
 
