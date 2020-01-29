@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 // define maximum value of buffer
-#define MAX 1024
+#define MAX 5000
 
 // define port of listening socket
 #define PORT 8080

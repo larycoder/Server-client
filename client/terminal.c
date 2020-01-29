@@ -17,13 +17,24 @@ void enableRawMode() {
 
 void drawUI(void){
   printf("\033[2J"); // clear terminal
-  updateUserMess("\n______begin char field______\n");
+
+  printf("\033[0;1H");
+  printf("\n\033[K");
+  printf("______begin chat field______\n");
   printf("\033[s"); // save cursor position
-  updateUserMess("");
+
+  printf("\033[0;0H\033[K");
+  printf("Text Enter: ");
+  fflush(stdout);
 }
 
 void updateUserMess(char* messEnter){
-  printf("\033[0;0H\033[K"); // move to enter field
+  // move to enter field
+  printf("\033[0;0H");
+  printf("\n\033[K");
+  printf("______begin chat field______\n");
+
+  printf("\033[0;0H\033[K");
   printf("Text Enter: %s", messEnter);
   fflush(stdout);
 }

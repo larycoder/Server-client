@@ -30,17 +30,18 @@ void* trackUserType(void* arg){
 }
 
 void* broadcastMess(void* arg){
-  char buff[MAX];
+  char messCome[MAX];
   int length = 0;
   while(1){
-    if((length = read(writeFd, buff, sizeof(buff) - 1)) < 0){
+    if((length = read(readFd, messCome, sizeof(buff) - 1)) < 0){
       printf("Fail to listen from server \n");
       exit(1);
     }
     else if(length > 0){
-      buff[length + 1] = '\0';
+      messCome[length + 1] = '\0';
       sem_wait(&mutex);
-      updateChatRoom(buff);
+      updateChatRoom(messCome);
+      updateUserMess(buff);
       sem_post(&mutex);
     }
   }
