@@ -6,7 +6,7 @@ int talk(char* room, int word_sz, int fd){
 }
 
 int hear(char* room, int word_sz, int fd){
-  return write(fd,room,word_sz);
+  return write(fd, room, word_sz);
 }
 
 void broad_cast(char* room, int word_sz, int* talker_array){

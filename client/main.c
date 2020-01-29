@@ -38,7 +38,7 @@ void* broadcastMess(void* arg){
       exit(1);
     }
     else if(length > 0){
-      messCome[length + 1] = '\0';
+      messCome[length] = '\0';
       sem_wait(&mutex);
       updateChatRoom(messCome);
       updateUserMess(buff);
