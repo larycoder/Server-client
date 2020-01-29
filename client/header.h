@@ -15,14 +15,14 @@
 #include<fcntl.h> // Non-blocking I/O lib
 
 #define SA struct sockaddr
-#define MAX 9000 // define max length of buffer
-#define R_PORT 80
-#define W_PORT 80
+#define MAX 1024 // define max length of buffer
+#define R_PORT 8080
+#define W_PORT 8080
 
 // staff operation
 void getIP(char *ip, int sz);
 int createFd(void);
-int trackUserMess(char* buff, int sz, int current);
+int trackUserMess(char* buff, int sz, int current, int* enterFlag);
 int setNonBlockingReading(int fd);
 
 /** 

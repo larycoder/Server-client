@@ -1,5 +1,6 @@
 # include "header.h"
 
+sem_t mutex;
 char buff[MAX];
 int readFd = 0, writeFd = 0;
 
@@ -7,11 +8,46 @@ void* trackUserType(void* arg){
   // var used to check user type
   int cursor = 0;
   int oldCursor = 0;
+  int enterFlag = 0;
   while(1){
-    cursor = trackUserMess(buff, MAX - 1, cursor);
+    cursor = trackUserMess(buff, MAX - 1, cursor, &enterFlag);
     if(cursor != oldCursor){
+      sem_wait(&mutex);
       updateUserMess(buff);
+      sem_post(&mutex);
       oldCursor = cursor;
+    }
+    if(enterFlag){
+      if(write(writeFd, buff, strlen(buff)) < 0){
+        printf("fail to send mess to server\n");
+        exit(1);
+      }
+      cursor = 0;
+      buff[0] = '\0';
+      enterFlag = 0;
+    }
+  }
+}
+
+void* broadcastMess(void* arg){
+  while(1){
+    char buff[MAX];
+    int length = 0;
+    // setup chat field
+    sem_wait(&mutex);
+    char beginField[] = "______begin char field______";
+    updateChatRoom(beginField);
+    sem_post(&mutex);
+
+    if((length = read(readFd, buff, sizeof(buff))) < 0){
+      printf("Fail to listen from server \n");
+      exit(1);
+    }
+    else{
+      buff[++length] = '\0';
+      sem_wait(&mutex);
+      updateChatRoom(buff);
+      sem_post(&mutex);
     }
   }
 }
@@ -19,6 +55,7 @@ void* trackUserType(void* arg){
 void closeSocket(void){
   close(readFd);
   close(writeFd);
+  sem_destroy(&mutex);
 }
 
 int main(){
@@ -53,6 +90,15 @@ int main(){
 
   // do something !
 
+  // send first mess to server
+  char one = '1', zero = '0';
+  int wrMess = write(readFd, &one, sizeof(char));
+  int rdMess = write(writeFd, &zero, sizeof(char));
+  if(wrMess < 0 || rdMess < 0){
+    printf("Fail to confirm type with server\n");
+    exit(1);
+  }
+
   // setup I/O
   if(!(setNonBlockingReading(STDIN_FILENO) == 0)){
     exit(1);
@@ -67,11 +113,14 @@ int main(){
   drawUI();
 
   // setup threads
-  pthread_t trackingUserTypeThread;
+  sem_init(&mutex, 0, 1);
+  pthread_t trackingUserTypeThread, broadcastMessThread;
   pthread_create(&trackingUserTypeThread, NULL, trackUserType, NULL);
+  pthread_create(&broadcastMessThread, NULL, broadcastMess, NULL);
 
   // join thread with main thread
   pthread_join(trackingUserTypeThread, NULL);
+  pthread_join(broadcastMessThread, NULL);
 
   // close the socket
   atexit(closeSocket);

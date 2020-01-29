@@ -27,8 +27,9 @@ void updateUserMess(char* messEnter){
 }
 
 void updateChatRoom(char* newMessCome){
-  printf("\033[u"); // restore cursor to chat field
+  printf("\033[u"); // store cursor position
+  printf("\n"); // begin new chat line
   printf("%s", newMessCome);
   fflush(stdout);
-  printf("\033[u"); // store cursor position
+  printf("\033[u"); // restore cursor to enter field
 }

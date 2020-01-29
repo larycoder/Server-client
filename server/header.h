@@ -22,8 +22,16 @@ typedef struct sockaddr SA;
 
 // talker operation
 int talk(char* room, int word_sz, int fd);
-void hear(char* room, int word_sz, int fd);
+int hear(char* room, int word_sz, int fd);
 void broad_cast(char* room, int word_sz, int* talker_array);
 
 // staff operation
-int open_chat_room(struct sockaddr_in chat_room);
+int createFd(void);
+int push2List(int fd, int* list, int sz);
+int addNewUser(int userFd, int* talkers, int* listeners);
+
+/*
+  * Define of protocol
+*/
+#define IAMTALKER '0'
+#define IAMLISTENER '1'
