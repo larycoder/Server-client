@@ -30,21 +30,15 @@ void* trackUserType(void* arg){
 }
 
 void* broadcastMess(void* arg){
+  char buff[MAX];
+  int length = 0;
   while(1){
-    char buff[MAX];
-    int length = 0;
-    // setup chat field
-    sem_wait(&mutex);
-    char beginField[] = "______begin char field______";
-    updateChatRoom(beginField);
-    sem_post(&mutex);
-
-    if((length = read(readFd, buff, sizeof(buff))) < 0){
+    if((length = read(writeFd, buff, sizeof(buff) - 1)) < 0){
       printf("Fail to listen from server \n");
       exit(1);
     }
-    else{
-      buff[++length] = '\0';
+    else if(length > 0){
+      buff[length + 1] = '\0';
       sem_wait(&mutex);
       updateChatRoom(buff);
       sem_post(&mutex);
@@ -112,6 +106,9 @@ int main(){
   enableRawMode();
   drawUI();
 
+  // close the socket
+  atexit(closeSocket);
+
   // setup threads
   sem_init(&mutex, 0, 1);
   pthread_t trackingUserTypeThread, broadcastMessThread;
@@ -121,9 +118,6 @@ int main(){
   // join thread with main thread
   pthread_join(trackingUserTypeThread, NULL);
   pthread_join(broadcastMessThread, NULL);
-
-  // close the socket
-  atexit(closeSocket);
 
   return 0;
 }
