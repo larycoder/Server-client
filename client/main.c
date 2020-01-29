@@ -18,7 +18,7 @@ void* trackUserType(void* arg){
       oldCursor = cursor;
     }
     if(enterFlag){
-      if(write(writeFd, buff, strlen(buff)) < 0){
+      if(write(writeFd, buff, strlen(buff) - 1) < 0){
         printf("fail to send mess to server\n");
         exit(1);
       }
