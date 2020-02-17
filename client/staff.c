@@ -37,11 +37,16 @@ int trackUserMess(char* buff, int sz, int current, int* enterFlag){
   char c;
   // ctrl D (^D) is 4
   read(STDIN_FILENO, &c, 1);
-  buff[current] = c;
-  buff[current + 1] = '\0';
-  current = (current + 1) % sz;
   if(c == '\n'){
     *enterFlag = 1;
   }
+  // BackSpace is 10 and Del is 127
+  else if(c == '\b' || c == 127){
+    current -= 2;
+    c = buff[current];
+  }
+  buff[current] = c;
+  buff[current + 1] = '\0';
+  current = (current + 1) % sz;
   return current;
 }
