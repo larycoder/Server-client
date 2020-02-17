@@ -36,13 +36,12 @@ int setNonBlockingReading(int fd){
 int trackUserMess(char* buff, int sz, int current, int* enterFlag){
   char c;
   // ctrl D (^D) is 4
-  while(read(STDIN_FILENO, &c, 1) != -1){
-    buff[current] = c;
-    buff[current + 1] = '\0';
-    current = (current + 1) % sz;
-    if(c == '\n'){
-      *enterFlag = 1;
-    }
+  read(STDIN_FILENO, &c, 1);
+  buff[current] = c;
+  buff[current + 1] = '\0';
+  current = (current + 1) % sz;
+  if(c == '\n'){
+    *enterFlag = 1;
   }
   return current;
 }

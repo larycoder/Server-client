@@ -16,6 +16,8 @@
 
 #include<fcntl.h> // Non-blocking I/O lib
 
+#include <sys/select.h> // select lib
+
 #define SA struct sockaddr
 #define MAX 5000 // define max length of buffer
 #define R_PORT 8080

@@ -31,8 +31,12 @@ void* trackUserType(void* arg){
 
 void* broadcastMess(void* arg){
   char messCome[MAX];
-  int length = 0;
+  int length = 0, activity, i = 0;
+  fd_set readfds;
   while(1){
+    FD_ZERO(&readfds);
+    FD_SET(readFd, &readfds);
+    activity = select(readFd + 1, &readfds, NULL, NULL, NULL); // wait until has comming mess
     if((length = read(readFd, messCome, sizeof(buff) - 1)) < 0){
       printf("Fail to listen from server \n");
       exit(1);
@@ -98,9 +102,9 @@ int main(){
   }
 
   // setup I/O
-  if(!(setNonBlockingReading(STDIN_FILENO) == 0)){
-    exit(1);
-  }
+  // if(!(setNonBlockingReading(STDIN_FILENO) == 0)){
+  //   exit(1);
+  // }
 
   // setup buff
   bzero(&buff, MAX);
