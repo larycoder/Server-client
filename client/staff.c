@@ -46,8 +46,9 @@ int trackUserMess(char* buff, int sz, int current, int* enterFlag){
     buff[current] = '\0';
     return current;
   }
+  if (current + 2 > sz) return current; // limit No.characters in chat buffer
   buff[current] = c;
   buff[current + 1] = '\0';
-  current = (current + 1) % sz;
+  current = current + 1;
   return current;
 }
