@@ -41,9 +41,10 @@ int trackUserMess(char* buff, int sz, int current, int* enterFlag){
     *enterFlag = 1;
   }
   // BackSpace is 10 and Del is 127
-  else if(c == '\b' || c == 127){
-    current -= 2;
-    c = buff[current];
+  else if((c == '\b' || c == 127) && current > 0){
+    current--;
+    buff[current] = '\0';
+    return current;
   }
   buff[current] = c;
   buff[current + 1] = '\0';

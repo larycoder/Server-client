@@ -10,9 +10,11 @@ void* trackUserType(void* arg){
   int enterFlag = 0;
   while(1){
     cursor = trackUserMess(buff, MAX - 1, cursor, &enterFlag); // wait until key press appeared
+    // update terminal
     sem_wait(&mutex);
     updateUserMess(buff);
     sem_post(&mutex);
+    // action when receive Entern press
     if(enterFlag){
       if(write(writeFd, buff, strlen(buff) - 1) < 0){
         printf("fail to send mess to server\n");
